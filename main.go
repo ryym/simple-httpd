@@ -266,7 +266,7 @@ func homeDir() string {
 
 const usage = `simple-httpd version: %s
 
-Usage: simple-httpd [-p port] [-l domain]
+Usage: simple-httpd [-p port] [-l domain] <directory>
 
 Options:
   -h           : this help
@@ -290,7 +290,6 @@ func main() {
 	var tlsPort int
 	var tlsCert string
 	var vers bool
-	pwd := getpwd()
 
 	flag.Usage = func() {
 		w := os.Stderr
@@ -311,6 +310,18 @@ func main() {
 	flag.IntVar(&tlsPort, "t", -1, "")
 	flag.Parse()
 
+	var baseDir string
+	restArgs := flag.Args()
+	switch len(restArgs) {
+	case 0:
+		baseDir = getpwd()
+	case 1:
+		baseDir = restArgs[0]
+	default:
+		fmt.Fprintf(os.Stderr, usage)
+		return
+	}
+
 	if vers {
 		fmt.Fprintf(os.Stdout, "simple-httpd version: %s\n", name+pathSeperator+version)
 		return
@@ -325,7 +336,7 @@ func main() {
 	h := &httpServer{
 		Port:      port,
 		TLSPort:   tlsPort,
-		Directory: pwd,
+		Directory: baseDir,
 		template:  template.Must(template.New("listing").Parse(htmlTemplate)),
 	}
 

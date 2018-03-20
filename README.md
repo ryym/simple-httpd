@@ -61,6 +61,12 @@ Generate a self signed certificate and run the server
 simple-httpd -g
 ```
 
+Specify another directory
+
+```
+simple-httpd built
+```
+
 ## Contributions
 
 * File Issue with details of the problem, feature request, etc.
